@@ -34,7 +34,7 @@ def tg_api(method, params=None):
         return None
 
     body = json.dumps(params or {}).encode()
-    conn = nil-https.HTTPSConnection("api.telegram.org", timeout=10)
+    conn = http.client.HTTPSConnection("api.telegram.org", timeout=10)
     try:
         path = f"/bot{BOT_TOKEN}/{method}"
         conn.request("POST", path, body=body,
@@ -141,6 +141,6 @@ elif cmd == "help":
     print("  bot.py status                      — Show config")
     print("  bot.py help                        — This message")
     print()
-    print("Set TELEGRAM_BOT_TOKEN env var for Telegram API.ort")
+    print("Set TELEGRAM_BOT_TOKEN env var for Telegram API.")
 else:
     print(f"Unknown command: {cmd}")

@@ -17,7 +17,8 @@ def check_url(url):
     host = parsed.hostname
     port = parsed.port or (443 if is_https else 80)
     path = parsed.path or "/"
-    if parsed.query: path += "?" + parsed.query
+    if parsed.query:
+        path += "?" + parsed.query
     start = time.time()
     status_code = None
     error = None
@@ -36,18 +37,27 @@ def check_url(url):
         error = str(e)
     elapsed_ms = round((time.time() - start) * 1000)
     is_up = status_code is not None and 200 <= status_code < 400
-    return {"url": url, "status_code": status_code, "response_time_ms": elapsed_ms,
-            "is_up": is_up, "error": error, "checked_at": datetime.now(timezone.utc).isoformat()}
+    return {
+        "url": url,
+        "status_code": status_code,
+        "response_time_ms": elapsed_ms,
+        "is_up": is_up,
+        "error": error,
+        "checked_at": datetime.now(timezone.utc).isoformat(),
+    }
 
 def load_history():
     if os.path.exists(HISTORY_FILE):
-        with open(HISTORY_FILE) as f: return json.load(f)
+        with open(HISTORY_FILE) as f:
+            return json.load(f)
     return {}
 
 def save_history(h):
     for url in h:
-        if len(h[url]) > MAX_HISTORY: h[url] = h[url][-MAX_HISTORY:]
-    with open(HISTORY_FILE, "w") as f: json.dump(h, f, indent=2)
+        if len(h[url]) > MAX_HISTORY:
+            h[url] = h[url][-MAX_HISTORY:]
+    with open(HISTORY_FILE, "w") as f:
+        json.dump(h, f, indent=2)
 
 def run_checks():
     history = load_history()
@@ -62,33 +72,41 @@ def run_checks():
 def run_server():
     port = int(os.environ.get("PORT", 8766))
     from http.server import HTTPServer, BaseHTTPRequestHandler
-    class H(BaseHTTPRequestHandler):
+
+    class Handler(BaseHTTPRequestHandler):
         def do_GET(self):
             if self.path == "/api/health":
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")
                 self.end_headers()
                 self.wfile.write(b'{"status":"ok"}')
-            elif self.path in ("/api/check","/api/status"):
+            elif self.path in ("/api/check", "/api/status"):
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")
                 self.end_headers()
                 self.wfile.write(json.dumps(run_checks(), indent=2).encode())
             elif self.path == "/":
                 results = run_checks()
-                html = "<html><head><title>Poke Labs Uptime</title></head><body><h1>Uptime Monitor</h1><pre>"
+                html = "<html><head><title>Poke Labs Uptime</title></head><body>"
+                html += "<h1>Poke Labs Uptime Monitor</h1><pre>"
                 for r in results:
                     icon = "OK" if r["is_up"] else "FAIL"
                     html += f"{icon} {r['url']} | {r['status_code']} | {r['response_time_ms']}ms\n"
+                html += f"\nChecked at: {datetime.now(timezone.utc).isoformat()}"
                 html += "</pre></body></html>"
                 self.send_response(200)
                 self.send_header("Content-Type", "text/html")
                 self.end_headers()
                 self.wfile.write(html.encode())
             else:
-                self.send_response(404); self.end_headers()
-        def log_message(self, *a): pass
-    HTTPServer(("0.0.0.0", port), H).serve_forever()
+                self.send_response(404)
+                self.end_headers()
+        def log_message(self, *a):
+            pass
+
+    server = HTTPServer(("0.0.0.0", port), Handler)
+    print(f"Uptime monitor running on port {port}")
+    server.serve_forever()
 
 if __name__ == "__main__":
     mode = sys.argv[1] if len(sys.argv) > 1 else "check"
