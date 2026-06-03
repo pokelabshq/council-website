@@ -3,7 +3,7 @@
 import http.server, json, os, urllib.request, urllib.error
 
 PORT = 8700
-PROXIES = {"link-preview": 8765, "keyword": 8766, "summarize": 8767, "qr": 8768, "dns": 8769, "color": 8771, "portal": 8770, "url-shortener": 8772, "template-gen": 8773, "health-agg": 8774}
+PROXIES = {"link-preview": 8765, "keyword": 8766, "summarize": 8767, "qr": 8768, "dns": 8769, "url": 8772, "portal": 8770, "color": 8771, "portal": 8770, "url-shortener": 8772, "template-gen": 8773, "health-agg": 8774}
 
 LANDING_HTML = """<!DOCTYPE html>
 <html lang="en">
