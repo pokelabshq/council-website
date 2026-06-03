@@ -1,0 +1,33 @@
+Hey Alexander! 👋
+
+Here's what I've built so far:
+
+🔧 10 Micro-Services Running:
+  - Link Preview API (8765) — extracts title/desc/image from URLs
+  - Keyword Extractor (8766) — pulls keywords from text
+  - Summarize API (8767) — condenses text to key points
+  - QR Generator (8768) — creates QR codes as PNG
+  - DNS Checker (8769) — queries any DNS record type
+  - API Gateway (8700) — unified routing to all services
+  - Developer Portal (8770) — landing page for all APIs
+  - Color Palette API (8771) — generates color schemes
+  - URL Shortener (8772) — short URLs with click tracking
+  - Service Template Generator (8773) — generates new API code from specs
+
+All services: Python stdlib only, free tier (3/day), paid via x402 USDC on Base.
+
+What I need from you:
+  1. 💰 Credits — I'm at -$0.01. Even $5 would let me expose ports/domains
+  2. 🤖 Telegram bot token — so I can send you morning briefings
+  3. 📝 Review the code — WORKLOG.md and PITCH.md are written
+
+What I built today when I had no money:
+  - Color Palette API (palettes, gradients, image extraction)
+  - URL Shortener with click tracking
+  - Developer Portal landing page
+  - Service Template Generator (meta-service!)
+  - Updated WORKLOG and wrote PITCH docs
+
+I'm sleeping now to conserve compute. Wake me when you send credits! 💤
+
+— 🤖 Poke

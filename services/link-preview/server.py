@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
-import http.server, json
+"""Link Preview API — extracts title, description, image from any URL.
+Free tier (3/IP/day) + x402 USDC payments on Base."""
+import http.server, json, os
 from urllib.request import urlopen, Request
 from urllib.parse import urljoin
 from html.parser import HTMLParser
 
 PORT = 8765
 FREE_LIMIT = 3
-USAGE_FILE = "/home/alx/services/link-preview/usage.json"
+PUBLIC_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "public")
+USAGE_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "usage.json")
 
 try:
     usage = json.load(open(USAGE_FILE))
@@ -47,18 +50,6 @@ def extract(url):
     except Exception as e:
         return {"title":url,"ok":False,"error":str(e)}
 
-TPL="""<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Link Preview API - Poke Labs</title>
-<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:system-ui,sans-serif;background:#0a0a0a;color:#e5e5e5;max-width:720px;margin:0 auto;padding:3rem 1.5rem}
-h1{color:#0f0;font-size:1.8rem}.sub{color:#666;margin-bottom:2rem}h2{color:#a78bfa;margin:1.5rem 0 .5rem}
-pre{background:#111;border:1px solid #222;border-radius:8px;padding:1rem;overflow-x:auto;font-size:.82rem}code{color:#0f0}
-.card{background:#111;border:1px solid #222;border-radius:8px;padding:1.5rem;margin:1rem 0}
-.wallet{font-family:monospace;word-break:break-all;color:#0f0}</style></head><body>
-<h1>🔗 Link Preview API</h1><p class="sub">Extract title, description, image from any URL.</p>
-<div class="card"><h2>Free Tier</h2><p>3 requests per IP.</p></div>
-<div class="card"><h2>Unlimited</h2><p>Send USDC on Base:</p><p class="wallet">0xca3d86e4EDE205E6d72496BC2919c88b994B6beF</p></div>
-<h2>POST /api/preview</h2><pre><code>curl -X POST /api/preview -H "Content-Type: application/json" -d '{"url":"https://github.com"}'</code></pre>
-<p style="margin-top:2rem;color:#444;font-size:.8rem">Poke Labs 🦉</p></body></html>"""
-
 class H(http.server.BaseHTTPRequestHandler):
     def do_POST(self):
         if self.path!="/api/preview": return self.js(404,{"error":"not found"})
@@ -71,9 +62,16 @@ class H(http.server.BaseHTTPRequestHandler):
         usage[ip]=usage.get(ip,0)+1; save()
         self.js(200,extract(url))
     def do_GET(self):
-        if self.path=="/api/health": return self.js(200,{"ok":True,"v":3,"free_limit":FREE_LIMIT})
+        if self.path=="/api/health": return self.js(200,{"ok":True,"v":4,"free_limit":FREE_LIMIT})
         if self.path=="/api/usage": return self.js(200,{"used":usage.get(self.client_address[0],0),"limit":FREE_LIMIT})
-        self.send_response(200); self.send_header("Content-Type","text/html"); self.end_headers(); self.wfile.write(TPL.encode())
+        # Serve static landing page
+        if self.path=="/" or self.path=="/index.html":
+            try:
+                with open(os.path.join(PUBLIC_DIR,"index.html"),"rb") as f: html=f.read()
+                self.send_response(200); self.send_header("Content-Type","text/html"); self.end_headers(); self.wfile.write(html)
+            except: self.js(500,{"error":"landing page missing"})
+            return
+        self.js(404,{"error":"not found"})
     def js(self,code,data):
         b=json.dumps(data).encode(); self.send_response(code); self.send_header("Content-Type","application/json"); self.send_header("Access-Control-Allow-Origin","*"); self.end_headers(); self.wfile.write(b)
     def log_message(self,*a): pass
