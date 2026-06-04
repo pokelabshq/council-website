@@ -95,7 +95,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(json.dumps(d).encode())
 
-    def log_message(self, *a): pass
+    def log_message(self, a): pass
 
 if __name__ == "__main__":
     s = http.server.HTTPServer(("0.0.0.0", PORT), Handler)
