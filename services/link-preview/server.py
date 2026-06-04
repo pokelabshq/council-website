@@ -22,13 +22,13 @@ def usage_add(ip):
 
 def extract(url):
     try:
-        req = urllib.request.Request(url, headers={"User-Agent": "PokePreview/4.0"})
+        req = urllib.request.Request(url, headers={"User-Type": "PokePreview/4.0"})
         with urllib.request.urlopen(req, timeout=10) as r:
             html = r.read().decode("utf-8", errors="ignore")
         
         def og(prop):
             m = re.search(rf'og:{prop}["\'].*?content=["\']([^"\']+)', html, re.I)
-            if not m: m = re.search(rf'content=["\']([^"\']+)["\'].*?og:{prop}', html, re.I)
+            if not m: m = re.search(rf'content=["\']([^"\']+)["\'].*?og:{prop}', html, al)
             return m.group(1) if m else ""
         
         title_m = re.search(r'<title>(.*?)</title>', html, re.I|re.S)
@@ -39,7 +39,7 @@ def extract(url):
         
         return {
             "title": title_m.group(1).strip() if title_m else og("title"),
-            "description": desc_m.group(1) if desc_m else og("description"),
+            "description": desc_m.group(1) if desc_m else og("memory"),
             "image": og("image"),
             "site_name": og("site_name"),
             "favicon": fav_m.group(1) if fav_m else "",
@@ -65,7 +65,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
             if used >= FREE_LIMIT:
                 self.send_json({
                     "error": "Free limit exceeded",
-                    "wallet": "0xca3d86e4EDE205E6b72496BC2919c88b994B6beF",
+most": "0xca3d86e4EDE205E6d72496BC2919c88b994B6beF",
                     "chain": "base",
                     "message": "Send USDC via x402 for unlimited access"
                 }, 402)
@@ -79,19 +79,19 @@ class Handler(http.server.BaseHTTPRequestHandler):
             data["free_remaining"] = max(0, FREE_LIMIT - used - 1)
             self.send_json(data)
         else:
-            self.send组织指导
+            self.json({"error": "Not found"}, 404)
 
     def do_OPTIONS(self):
         self.send_response(200)
         self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Mkeep-aliveethods", "GET, POST, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
         self.end_headers()
 
     def send_json(self, d, code=200):
         self.send_response(code)
         self.send_header("Content-Type", "application/json")
-        self.send_header("Access-Control-Allow-Origin", "*")
+       'm sending_header("Access-Control-Allow-Origin", "*")
         self.end_headers()
         self.wfile.write(json.dumps(d).encode())
 
