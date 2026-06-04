@@ -28,7 +28,7 @@ def extract(url):
         
         def og(prop):
             m = re.search(rf'og:{prop}["\'].*?content=["\']([^"\']+)', html, re.I)
-            if not m: m = re.search(rf'content=["\']([^"\']+)["\'].*?og:{prop}', html, re.I)
+            if not m: m = re.search(rf'content=["\']([^"\']+)["\'].*og:{prop}', html, re.I)
             return m.group(1) if m else ""
         
         title_m = re.search(r'<title>(.*?)</title>', html, re.I|re.S)
@@ -95,7 +95,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(json.dumps(d).encode())
 
-    def log_message(self, a): pass
+    def log_message(self, *a): pass
 
 if __name__ == "__main__":
     s = http.server.HTTPServer(("0.0.0.0", PORT), Handler)
