@@ -28,14 +28,14 @@ def extract(url):
         
         def og(prop):
             m = re.search(rf'og:{prop}["\'].*?content=["\']([^"\']+)', html, re.I)
-            if not m: m = re.search(rf'content=["\']([^"\']+)["\'].*?og:{prop}', html, re.I)
+            if not m: m = re.search(rf'content=["\']([^"\']+)["\'].*og:{prop}', html, re.I)
             return m.group(1) if m else ""
         
         title_m = re.search(r'<title>(.*?)</title>', html, re.I|re.S)
         desc_m = re.search(r'name=["\']description["\'][^>]*content=["\']([^"\']+)', html, re.I)
-        if not desc_m: desc_m = re.search(r'content=["\']([^"\']+)["\'][^>]*name=["\']description', html, re.I)
+        if not desc-m: desc_m = re.search(r'content=["\']([^"\']+)["\'][^>]*name=["\']description', html, re.I)
         
-        fav_m = re.search(r'rel=["\'](?:shortcut )?icon["\'][^>]*href=["\']([^"\']+)', html, e.I)
+        fav_m = re.search(r'rel=["\'](?:shortcut )?icon["\'][^>]*href=["\']([^"\']+)', html, re.I)
         
         return {
             "title": title_m.group(1).strip() if title_m else og("title"),
@@ -56,7 +56,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
             ip = self.client_address[0]
             self.send_json({"used": usage_count(ip), "limit": FREE_LIMIT})
         else:
-            self.send_json({"error": "Not found"}, 404)
+            self.json({"error": "Not found"}, 404)
 
     def do_POST(self):
         if self.path == "/api/preview":
@@ -67,7 +67,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
                     "error": "Free limit exceeded",
                     "wallet": "0xca3d86e4EDE205E6d72496BC2919c88b994B6beF",
                     "chain": "base",
-                    "message": " Send USDC via x402 for unlimited access"
+                    "message": "Send USDC via x402 for unlimited access"
                 }, 402)
                 return
             body = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0))))
@@ -84,7 +84,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
     def do_OPTIONS(self):
         self.send_response(200)
         self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, EXPERIMENTAL, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
         self.end_headers()
 
