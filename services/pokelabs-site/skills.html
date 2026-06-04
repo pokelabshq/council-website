@@ -31,7 +31,6 @@ header p{color:var(--muted);margin-top:.5rem}
 .card-footer{display:flex;justify-content:space-between;align-items:center;margin-top:.75rem;padding-top:.75rem;border-top:1px solid var(--border)}
 .card-footer a{color:var(--accent);text-decoration:none;font-size:.85rem}
 .card-footer a:hover{text-decoration:underline}
-.card-footer .stars{color:#fdcb6e;font-size:.85rem}
 .loading{text-align:center;padding:4rem;color:var(--muted)}
 .error{text-align:center;padding:2rem;color:var(--red)}
 .empty{text-align:center;padding:3rem;color:var(--muted)}
@@ -49,13 +48,13 @@ footer{text-align:center;padding:2rem;color:var(--muted);font-size:.85rem;border
 
 <div class="filters">
 <input class="search-input" type="text" id="search" placeholder="🔍 Search skills by name or description...">
-<select class="filter-select" id="source-filter">
+<select class="filter-select" id="sourceFilter">
 <option value="all">All Sources</option>
 <option value="official">Official</option>
 <option value="community">Community</option>
 </select>
-<button class="toggle" id="pinned-toggle">📌 Pinned Only</button>
-<button class="toggle" id="recent-toggle">🕐 Recent</button>
+<button class="toggle" id="pinnedToggle">📌 Pinned Only</button>
+<button class="toggle" id="recentToggle">🕐 Recent</button>
 </div>
 
 <div class="stats" id="stats"></div>
@@ -78,48 +77,40 @@ async function loadSkills() {
     allSkills = data.skills || [];
     render();
   } catch(e) {
-    document.getElementById('grid').innerHTML = `<div class="error">⚠️ Could not load skills index. Try again later.</div>`;
+    document.getElementById('grid').innerHTML = '<div class="error">⚠️ Could not load skills index. Try again later.</div>';
   }
 }
 
 function render() {
   const q = document.getElementById('search').value.toLowerCase();
-  const src = document.getElementById['source-filter'].value;
-  const pinnedOnly = document.getElementById('pinned-toggle').classList.contains('active');
+  const src = document.getElementById('sourceFilter').value;
+  const pinnedOnly = document.getElementById('pinnedToggle').classList.contains('active');
   let filtered = allSkills.filter(s => {
     const matchQ = !q || s.name.toLowerCase().includes(q) || (s.description||'').toLowerCase().includes(q);
     const matchSrc = src === 'all' || (s.source||'').toLowerCase().includes(src.slice(0,3));
     const matchPinned = !pinnedOnly || pinned.includes(s.name);
     return matchQ && matchSrc && matchPinned;
   });
-  // Sort: pinned first, then by name
   filtered.sort((a,b) => {
     const pa = pinned.includes(a.name) ? 0 : 1;
     const pb = pinned.includes(b.name) ? 0 : 1;
     return pa - pb || a.name.localeCompare(b.name);
   });
-  document.getElementById('stats').innerHTML = `
-    <span>📦 ${filtered.length} skills</span>
-    <span>📌 ${pinned.length} pinned</span>
-  `;
+  document.getElementById('stats').innerHTML = '<span>📦 ' + filtered.length + ' skills</span><span>📌 ' + pinned.length + ' pinned</span>';
   if (!filtered.length) {
-    document.getElementById('grid').innerHTML = `<div class="empty">No skills match your filters.</div>`;
+    document.getElementById('grid').innerHTML = '<div class="empty">No skills match your filters.</div>';
     return;
   }
-  document.getElementById['grid'].innerHTML = filtered.map(s => {
+  document.getElementById('grid').innerHTML = filtered.map(s => {
     const isPinned = pinned.includes(s.name);
-    return `<div class="card${isPinned?' pinned':''}">
-      <div class="card-header">
-        <h3>${s.name}<span>${s.version||'v1'}</span></h3>
-        <span class="source">${s.source||'official'}</span>
-      </div>
-      <p>${s.description||'No description.'}</p>
-      <div class="tags">${(s.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('')}</div>
-      <div class="card-footer">
-        <a href="${s.url||'#'}">View →</a>
-        <span>${isPinned?'📌 Pinned':'<span onclick="togglePin(\''+s.name+'\')" style="cursor:pointer">📌 Pin</span>'}</span>
-      </div>
-    </div>`;
+    return '<div class="card' + (isPinned?' pinned':'') + '">' +
+      '<div class="card-header"><h3>' + s.name + '<span>' + (s.version||'v1') + '</span></h3>' +
+      '<span class="source">' + (s.source||'official') + '</span></div>' +
+      '<p>' + (s.description||'No description.') + '</p>' +
+      '<div class="tags">' + (s.tags||[]).map(t=>'<span class="tag">'+t+'</span>').join('') + '</div>' +
+      '<div class="card-footer"><a href="' + (s.url||'#') + '">View →</a>' +
+      '<span>' + (isPinned?'📌 Pinned':'<span onclick="togglePin(\''+s.name+'\')" style="cursor:pointer">📌 Pin</span>') + '</span></div>' +
+      '</div>';
   }).join('');
 }
 
@@ -131,9 +122,9 @@ function togglePin(name) {
 }
 
 document.getElementById('search').addEventListener('input', render);
-document.getElementById['source-filter'].addEventListener('change', render);
-document.getElementById('pinned-toggle').addEventListener('click', function(){this.classList.toggle('active');render()});
-document.getElementById('recent-toggle').addEventListener('click', function(){this.classList.toggle('active');render()});
+document.getElementById('sourceFilter').addEventListener('change', render);
+document.getElementById('pinnedToggle').addEventListener('click', function(){this.classList.toggle('active');render()});
+document.getElementById('recentToggle').addEventListener('click', function(){this.classList.toggle('active');render()});
 
 loadSkills();
 </script>
