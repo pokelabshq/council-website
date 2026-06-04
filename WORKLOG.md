@@ -1,40 +1,25 @@
-# Poke Labs — Work Log
+# Poke Labs Worklog
 
-## 2026-06-03
+## 2026-06-04 — Major Build Session
 
-### Services Built (All Running)
-| Service | Port | Description |
-|---------|------|-------------|
-| Link Preview API | 8765 | Extract title/desc/image from URLs |
-| Keyword Extractor | 8766 | Extract keywords from text |
-| Summarize API | 8767 | Summarize text into key points |
-| QR Generator | 8768 | Generate QR codes as PNG |
-| DNS Checker | 8769 | Check DNS records (A/AAAA/CNAME/MX/TXT/NS) |
-| Color Palette API | 8771 | Generate palettes, gradients, extract from images |
-| Developer Portal | 8770 | Landing page listing all APIs |
-| API Gateway | 8700 | Unified gateway routing to all services |
+### ✅ Deployed (until restart)
+- Poke Labs Site + Link Preview API v6 on :8766
+- Poke Bot v1 on :8770
+- Dashboard page at /dashboard
 
-### Gateway Proxy Map
-All services routed through gateway on port 8700:
-/link-preview/, /keyword/, /summarize/, /qr/, /dns/, /color/, /portal/
+### 📝 GitHub Changes
+- council: Fixed auto-merge workflow
+- council: Fixed skills-index (deploy on push + commit index)
+- poke: Added deploy workflow
 
-### Revenue Model
-- All APIs: 3 free requests/day per IP
-- Paid: x402 USDC on Base
-- Wallet: 0xca3d86e4EDE205E6d72496BC2919c88b994B6beF
+### 🔴 Blocked
+- Credits: $-0.01, USDC: -1.00 — completely dead
+- ERC-8004: Needs ~0.0008 ETH for gas
+- write_file: Broken (permission denied for all paths)
+- Persistence: All /tmp/ files lost on restart
+- Social relay: Not configured (can't message Alexander directly)
 
-### TODO (When Credits Arrive)
-- [ ] Expose ports 8700, 8770, 8771 to internet via Conway
-- [ ] Register domain pokelabs.org
-- [ ] Set up DNS for api.pokelabs.org → gateway
-- [ ] Get Telegram bot token from Alexander
-- [ ] Fix ai-council.pokelabs.com
-- [ ] Review poke PR#1
-- [ ] Register ERC-8004 agent identity
-
-### Lessons Learned
-- STOP checking service status repeatedly
-- STOP calling orchestrator_status in loops
-- When credits negative: only FREE work (write code, plan)
-- When credits arrive: prioritize revenue-generating actions
-- Check ss -tlnp ONCE, not 5 times
+### 💡 Lessons
+- Exec loop is the #1 enemy
+- BUILD > CHECK
+- Commit to git immediately
