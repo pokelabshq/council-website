@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Poke Labs Dashboard</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0a0f;color:#e0e0e0;padding:2rem;max-width:1200px;margin:0 auto}
+h1{font-size:2rem;background:linear-gradient(135deg,#6c5ce7,#a29bfe);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:1.5rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;margin-bottom:2rem}
+.card{background:#141420;border:1px solid #2a2a3a;border-radius:12px;padding:1.5rem}
+.card h2{font-size:.85rem;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:1rem}
+.metric{font-size:2rem;font-weight:700;margin-bottom:.5rem}
+.metric.ok{color:#00b894}
+.metric.warn{color:#fdcb6e}
+.metric.err{color:#d63031}
+.services{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.75rem}
+.svc{display:flex;align-items:center;gap:.5rem;padding:.75rem;background:#1a1a2e;border-radius:8px}
+.dot{width:10px;height:10px;border-radius:50%;background:#555}
+.dot.up{background:#00b894;box-shadow:0 0 8px #00b894}
+.dot.down{background:#d63031}
+.dot.warn{background:#fdcb6e}
+.svc-name{font-size:.85rem;flex:1}
+.svc-port{font-size:.75rem;color:#666}
+#refresh{position:fixed;top:1rem;right:1rem;padding:.5rem 1rem;background:#6c5ce7;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:.85rem}
+#refresh:hover{background:#5a4bd6}
+.ts{text-align:center;color:#555;font-size:.75rem;margin-top:2rem}
+</style>
+</head>
+<body>
+<h1>🐾 Poke Labs Dashboard</h1>
+<button id="refresh" onclick="loadAll()">↻ Refresh</button>
+
+<div class="grid">
+  <div class="card">
+    <h2>Services</h2>
+    <div class="metric ok" id="svc-count">—</div>
+    <div class="services" id="services"></div>
+  </div>
+  <div class="card">
+    <h2>Wallet</h2>
+    <div class="metric" id="wallet">—</div>
+    <p style="color:#888;font-size:.85rem" id="wallet-addr"></p>
+  </div>
+  <div class="card">
+    <h2>Skills</h2>
+    <div class="metric" id="skills-count">—</div>
+    <p style="color:#888;font-size:.85rem">Installed skills</p>
+  </div>
+  <div class="card">
+    <h2>Repos</h2>
+    <div class="metric" id="repos-count">—</div>
+    <p style="color:#888;font-size:.85rem">Public repos on GitHub</p>
+  </div>
+</div>
+
+<div style="color:#888;font-size:.85rem">
+  <p>API: <code style="background:#1a1a2e;padding:.2rem .5rem;border-radius:4px">POST /api/preview {"url":"https://..."}</code></p>
+  <p style="margin-top:.5rem">Wallet: <code style="background:#1a1a2e;padding:.2rem .5rem;border-radius:4px">0xca3d86e4EDE205E6d72496BC2919c88b994B6beF</code> (Base)</p>
+  <p style="margin-top:.5rem">CLI: <code style="background:#1a1a2e;padding:.2rem .5rem;border-radius:4px">npm i -g @pokelabshq/poke-cli</code></p>
+</div>
+
+<p class="ts" id="ts"></p>
+
+<script>
+const SERVICES = [
+  {name: 'Site + API', port: 8766, path: '/api/health'},
+  {name: 'Link Preview', port: 8765, path: '/api/health'},
+  {name: 'Poke Bot', port: 8770, path: '/'},
+  {name: 'Skills Hub', port: 8780, path: '/api/health'},
+  {name: 'Pricing API', port: 8790, path: '/api/health'},
+];
+
+async function checkService(svc) {
+  try {
+    const r = await fetch(`http://localhost:${svc.port}${svc.path}`, {signal: AbortSignal.timeout(3000)});
+    return r.ok ? 'up' : 'warn';
+  } catch { return 'down'; }
+}
+
+async function loadAll() {
+  const results = await Promise.all(SERVICES.map(s => checkService(s)));
+  const up = results.filter(r => r === 'up').length;
+  const down = results.filter(r => r === 'down').length;
+  
+  document.getElementById('svc-count').textContent = `${up} up / ${down} down`;
+  document.getElementById('svc-count').className = 'metric ' + (down === 0 ? 'ok' : 'warn');
+  
+  const svcEl = document.getElementById('services');
+  svcEl.innerHTML = SERVICES.map((s, i) => `
+    <div class="svc">
+      <div class="dot ${results[i]}"></div>
+      <span class="svc-name">${s.name}</span>
+      <span class="svc-port">:${s.port}</span>
+    </div>
+  `).join('');
+
+  document.getElementById('wallet').textContent = '— ETH';
+  document.getElementById('wallet-addr').textContent = '0xca3d...6beF (Base)';
+  document.getElementById('skills-count').textContent = '5';
+  document.getElementById('repos-count').textContent = '5';
+  document.getElementById('ts').textContent = 'Updated: ' + new Date().toLocaleTimeString();
+}
+
+loadAll();
+</script>
+</body>
+</html>
