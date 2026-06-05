@@ -1,33 +1,31 @@
 version: "3.8"
 services:
   link-preview:
-    build: ./services/link-preview
+    build: {context: ./services/link-preview, dockerfile: ../Dockerfile}
     ports: ["8765:8765"]
     restart: unless-stopped
   pokelabs-site:
-    build: ./services/pokelabs-site
+    build: {context: ./services/pokelabs-site, dockerfile: ../Dockerfile}
     ports: ["8766:8766"]
     restart: unless-stopped
   poke-bot:
-    build: ./services/poke-bot
+    build: {context: ./services/poke-bot, dockerfile: ../Dockerfile}
     ports: ["8770:8770"]
     restart: unless-stopped
   discord-bot:
-    build: ./services/discord-bot
+    build: {context: ./services/discord-bot, dockerfile: ../Dockerfile}
     ports: ["8775:8775"]
     restart: unless-stopped
   telegram-bot:
-    build: ./services/telegram-bot
+    build: {context: ./services/telegram-bot, dockerfile: ../Dockerfile}
     ports: ["8777:8777"]
     restart: unless-stopped
-    environment:
-      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN:-}
-      - TELEGRAM_CHAT=${TELEGRAM_CHAT:-}
+    environment: [TELEGRAM_TOKEN=${TELEGRAM_TOKEN:-}, TELEGRAM_CHAT=${TELEGRAM_CHAT:-}]
   skills-hub:
-    build: ./services/skills-hub
+    build: {context: ./services/skills-hub, dockerfile: ../Dockerfile}
     ports: ["8780:8780"]
     restart: unless-stopped
   pricing-api:
-    build: ./services/pricing-api
+    build: {context: ./services/pricing-api, dockerfile: ../Dockerfile}
     ports: ["8790:8790"]
     restart: unless-stopped
