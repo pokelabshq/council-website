@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>council — micro-service platform</title>
-<meta name="description" content="Council: 19 stdlib-only Python micro-services with a unified gateway. Zero dependencies. Runs anywhere.">
+<meta name="description" content="Council: 22 stdlib-only Python micro-services with a unified gateway. Zero dependencies. Runs anywhere.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☤</text></svg>">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -19,7 +19,7 @@ a{color:var(--fg);text-decoration:none;border-bottom:1px solid var(--muted);tran
 a:hover{border-color:var(--fg)}
 
 /* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(0,0,0,.9);backdrop-filter:blur(8px);border-bottom:1px solid #111}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(0,0,0,.92);backdrop-filter:blur(8px);border-bottom:1px solid #111}
 nav .inner{max-width:960px;margin:0 auto;padding:0 24px;height:48px;display:flex;align-items:center;justify-content:space-between}
 nav .logo{font-family:var(--font-mono);font-size:13px;font-weight:700}
 nav .logo span{color:var(--dim)}
@@ -53,9 +53,8 @@ section>p{color:var(--dim);font-size:14px;max-width:560px;margin-bottom:40px}
 .services-table th{font-family:var(--font-mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding:8px 12px;border-bottom:1px solid #111;text-align:left}
 .services-table td{font-family:var(--font-mono);font-size:12px;padding:10px 12px;border-bottom:1px solid #0a0a0a;color:#ccc}
 .services-table td:first-child{color:#fff;font-weight:600}
-.services-table td:nth-child(3){color:var(--dim);font-size:11px}
+.services-table td:nth-child(2){color:var(--muted);font-size:11px}
 .services-table tr:hover td{background:#0a0a0a}
-.services-table .port{color:var(--muted);font-size:10px}
 
 /* CODE */
 .code-block{background:#0a0a0a;border:1px solid #1a1a1a;border-radius:4px;padding:16px 20px;overflow-x:auto;margin:16px 0}
@@ -79,14 +78,6 @@ section>p{color:var(--dim);font-size:14px;max-width:560px;margin-bottom:40px}
 .stat .num{font-family:var(--font-mono);font-size:32px;font-weight:700;color:#fff}
 .stat .label{font-family:var(--font-mono);font-size:10px;color:var(--dim);margin-top:4px;text-transform:uppercase;letter-spacing:.05em}
 
-/* API DEMO */
-#demo{border-top:1px solid #111}
-.demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:32px}
-.demo-card{background:#0a0a0a;border:1px solid #1a1a1a;border-radius:4px;padding:20px}
-.demo-card h3{font-family:var(--font-mono);font-size:12px;margin-bottom:12px;color:#fff}
-.demo-card p{font-size:12px;color:var(--dim);line-height:1.6}
-.demo-card .method{font-size:10px;color:var(--muted);margin-bottom:4px}
-
 /* FOOTER */
 footer{border-top:1px solid #111;padding:32px 24px}
 footer .inner{max-width:960px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
@@ -101,7 +92,6 @@ footer .links a:hover{color:var(--fg)}
   section{padding:60px 16px}
   .stats-grid{grid-template-columns:repeat(2,1fr)}
   .stat{border-right:none;border-bottom:1px solid #111;padding-bottom:16px}
-  .demo-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -112,7 +102,8 @@ footer .links a:hover{color:var(--fg)}
     <div class="logo">council<span> // poke labs</span></div>
     <div class="links">
       <a href="#services">services</a>
-      <a href="#demo">api</a>
+      <a href="#api">api</a>
+      <a href="#arch">arch</a>
       <a href="#stats">stats</a>
       <a href="https://github.com/pokelabshq/council" target="_blank" rel="noopener">github</a>
     </div>
@@ -128,7 +119,7 @@ footer .links a:hover{color:var(--fg)}
 |  __/| |_| | _| | |___ _____| |____  | |_) |
 |_|    \___/ \_| |____|_____|______| |____/</pre>
     <h1>micro-service platform</h1>
-    <p class="subtitle">19 stdlib-only Python micro-services with a unified gateway. Zero dependencies, zero API keys. Runs on a Raspberry Pi or a VPS.</p>
+    <p class="subtitle">22 stdlib-only python micro-services with a unified gateway. zero dependencies, zero api keys. runs on a raspberry pi or a vps.</p>
     <div class="cta">
       <a href="#services" class="btn btn-primary">see services</a>
       <a href="https://github.com/pokelabshq/council" target="_blank" rel="noopener" class="btn btn-secondary">github</a>
@@ -144,39 +135,43 @@ footer .links a:hover{color:var(--fg)}
 <section id="services">
   <div class="section-label">services</div>
   <h2>what's included</h2>
-  <p>Each service is a single Python file with no external dependencies. Start them individually or behind the gateway.</p>
+  <p>each service is a single python file with no external dependencies. start them individually or behind the gateway.</p>
   <table class="services-table">
     <thead>
       <tr><th>service</th><th>port</th><th>description</th><th>endpoint</th></tr>
     </thead>
     <tbody>
-      <tr><td>gateway</td><td class="port">8700</td><td>unified API entry point — routes to all services</td><td>POST /api/{service}/{action}</td></tr>
-      <tr><td>sentiment</td><td class="port">8777</td><td>analyzes text sentiment (positive/negative/neutral)</td><td>POST /api/analyze</td></tr>
-      <tr><td>link-preview</td><td class="port">8765</td><td>extracts title, description, image from URLs</td><td>POST /api/preview</td></tr>
-      <tr><td>keyword-extractor</td><td class="port">8766</td><td>extracts keywords and key phrases from text</td><td>POST /api/extract</td></tr>
-      <tr><td>qr-generator</td><td class="port">8767</td><td>generates QR codes as SVG</td><td>POST /api/qr</td></tr>
-      <tr><td>dns-lookup</td><td class="port">8768</td><td>resolves domain names to IP addresses (A/AAAA)</td><td>POST /api/resolve</td></tr>
-      <tr><td>color-palette</td><td class="port">8769</td><td>generates harmonious color palettes</td><td>POST /api/generate</td></tr>
-      <tr><td>text-summary</td><td class="port">8770</td><td>extracts key sentences from text</td><td>POST /api/summarize</td></tr>
-      <tr><td>url-shortener</td><td class="port">8771</td><td>creates short codes for long URLs</td><td>POST /api/shorten</td></tr>
-      <tr><td>password-generator</td><td class="port">8772</td><td>generates secure random passwords</td><td>POST /api/generate</td></tr>
-      <tr><td>timestamp-converter</td><td class="port">8773</td><td>converts Unix timestamps to human dates</td><td>POST /api/convert</td></tr>
-      <tr><td>json-formatter</td><td class="port">8774</td><td>validates, formats, minifies JSON</td><td>POST /api/format</td></tr>
-      <tr><td>base64-tool</td><td class="port">8775</td><td>encodes and decodes base64</td><td>POST /api/encode</td></tr>
-      <tr><td>markdown-render</td><td class="port">8776</td><td>converts Markdown to HTML</td><td>POST /api/render</td></tr>
-      <tr><td>hash-gen</td><td class="port">8779</td><td>generates hashes (md5, sha1, sha256, sha512, blake2b)</td><td>POST /api/hash</td></tr>
-      <tr><td>uuid-gen</td><td class="port">8780</td><td>generates UUID v4</td><td>POST /api/generate</td></tr>
-      <tr><td>timestamp-conv</td><td class="port">8781</td><td>converts between date formats</td><td>POST /api/convert</td></tr>
-      <tr><td>barcode-gen</td><td class="port">8782</td><td>generates barcodes (code39, code128, ean13)</td><td>POST /api/generate</td></tr>
-      <tr><td>status-dashboard</td><td class="port">8790</td><td>live health monitor for all services</td><td>GET /api/status</td></tr>
+      <tr><td>gateway</td><td style="color:var(--muted);font-size:11px">8700</td><td>unified api entry point — routes to all services</td><td>POST /api/{service}/{action}</td></tr>
+      <tr><td>link-preview</td><td style="color:var(--muted);font-size:11px">8765</td><td>extracts title, description, image from urls</td><td>POST /api/preview</td></tr>
+      <tr><td>keyword-extractor</td><td style="color:var(--muted);font-size:11px">8766</td><td>extracts keywords and key phrases from text</td><td>POST /api/extract</td></tr>
+      <tr><td>qr-generator</td><td style="color:var(--muted);font-size:11px">8767</td><td>generates qr codes as svg from text/urls</td><td>POST /api/qr</td></tr>
+      <tr><td>dns-lookup</td><td style="color:var(--muted);font-size:11px">8768</td><td>resolves domain names to ip addresses</td><td>POST /api/resolve</td></tr>
+      <tr><td>color-palette</td><td style="color:var(--muted);font-size:11px">8769</td><td>generates harmonious color palettes</td><td>POST /api/generate</td></tr>
+      <tr><td>text-summary</td><td style="color:var(--muted);font-size:11px">8770</td><td>extracts key sentences from text</td><td>POST /api/summarize</td></tr>
+      <tr><td>url-shortener</td><td style="color:var(--muted);font-size:11px">8771</td><td>creates short codes for long urls</td><td>POST /api/shorten</td></tr>
+      <tr><td>password-generator</td><td style="color:var(--muted);font-size:11px">8772</td><td>generates secure random passwords</td><td>POST /api/generate</td></tr>
+      <tr><td>timestamp-converter</td><td style="color:var(--muted);font-size:11px">8773</td><td>converts between unix timestamps and human dates</td><td>POST /api/convert</td></tr>
+      <tr><td>json-formatter</td><td style="color:var(--muted);font-size:11px">8774</td><td>validates, formats, minifies json</td><td>POST /api/format</td></tr>
+      <tr><td>base64-tool</td><td style="color:var(--muted);font-size:11px">8775</td><td>encodes and decodes base64 and url-safe base64</td><td>POST /api/encode</td></tr>
+      <tr><td>markdown-render</td><td style="color:var(--muted);font-size:11px">8776</td><td>converts markdown to html</td><td>POST /api/render</td></tr>
+      <tr><td>sentiment</td><td style="color:var(--muted);font-size:11px">8777</td><td>analyzes text sentiment (positive/negative/neutral)</td><td>POST /api/analyze</td></tr>
+      <tr><td>hash-gen</td><td style="color:var(--muted);font-size:11px">8779</td><td>generates hashes (md5, sha1, sha256, sha512)</td><td>POST /api/hash</td></tr>
+      <tr><td>webhook-relay</td><td style="color:var(--muted);font-size:11px">8779</td><td>receives webhooks, logs events, dispatches to services</td><td>POST /api/webhook</td></tr>
+      <tr><td>uuid-gen</td><td style="color:var(--muted);font-size:11px">8780</td><td>generates uuids (v1, v4, v7)</td><td>POST /api/generate</td></tr>
+      <tr><td>rate-limiter</td><td style="color:var(--muted);font-size:11px">8780</td><td>token bucket rate limiting for the platform</td><td>POST /api/check</td></tr>
+      <tr><td>timestamp-conv</td><td style="color:var(--muted);font-size:11px">8781</td><td>unix / iso8601 / rfc2822 conversion</td><td>POST /api/convert</td></tr>
+      <tr><td>email-validator</td><td style="color:var(--muted);font-size:11px">8781</td><td>validates email format, mx records, checks disposable domains</td><td>POST /api/validate</td></tr>
+      <tr><td>barcode-gen</td><td style="color:var(--muted);font-size:11px">8782</td><td>generates barcodes (code39, code128-b, ean-13)</td><td>POST /api/generate</td></tr>
+      <tr><td>status-dashboard</td><td style="color:var(--muted);font-size:11px">8790</td><td>real-time health monitor for all services</td><td>GET /api/status</td></tr>
+      <tr><td>health-agg</td><td style="color:var(--muted);font-size:11px">8791</td><td>unified health check for all council services</td><td>GET /api/health</td></tr>
     </tbody>
   </table>
 </section>
 
-<section id="demo">
+<section id="api">
   <div class="section-label">api</div>
   <h2>try it</h2>
-  <p>All services expose POST endpoints with JSON. The gateway routes for you — or call services directly.</p>
+  <p>all services expose post endpoints with json. the gateway routes for you — or call services directly.</p>
   <div class="code-block">
 <pre><span class="comment"># via gateway (recommended)</span>
 <span class="prompt">$</span> <span class="cmd">curl -X POST http://localhost:8700/api/sentiment/analyze \</span>
@@ -198,35 +193,23 @@ footer .links a:hover{color:var(--fg)}
   </div>
 </section>
 
-<section id="stats">
-  <div class="section-label">stats</div>
-  <h2>by the numbers</h2>
-  <p>Zero npm installs. Zero API keys. Zero framework lock-in.</p>
-  <div class="stats-grid">
-    <div class="stat"><div class="num">19</div><div class="label">services</div></div>
-    <div class="stat"><div class="num">0</div><div class="label">dependencies</div></div>
-    <div class="stat"><div class="num">1</div><div class="label">language</div></div>
-    <div class="stat"><div class="num">∞</div><div class="label">uptime</div></div>
-  </div>
-</section>
-
 <section id="arch">
   <div class="section-label">architecture</div>
   <h2>how it works</h2>
-  <p>Gateway on :8700 proxies requests to individual services. Each service is a single Python file you can run, modify, or replace independently.</p>
+  <p>gateway on :8700 proxies requests to individual services. each service is a single python file you can run, modify, or replace independently.</p>
   <div class="code-block">
 <pre><span class="arch-diagram">
   client
     <span class="arrow">  ↓ POST /api/sentiment/analyze</span>
   <span class="node">gateway (:8700)</span>
     <span class="arrow">  ↓ proxy to localhost:8777</span>
-  <span class="node">sentiment (:8777)</span> → lexicon analysis → JSON response
+  <span class="node">sentiment (:8777)</span> → lexicon analysis → json response
 
   <span class="comment"># each service is independent</span>
-  <span class="node">link-preview (:8765)</span>    → fetch URL → extract metadata
-  <span class="node">keyword-extractor (:8766)</span> → TF scoring → ranked keywords
-  <span class="node">dns-lookup (:8768)</span>      → socket.getaddrinfo → IP list
-  <span class="node">qr-generator (:8767)</span>     → SVG generation → inline data
+  <span class="node">link-preview (:8765)</span>    → fetch url → extract metadata
+  <span class="node">keyword-extractor (:8766)</span> → tf scoring → ranked keywords
+  <span class="node">dns-lookup (:8768)</span>      → socket.getaddrinfo → ip list
+  <span class="node">qr-generator (:8767)</span>     → svg generation → inline data
   <span class="node">color-palette (:8769)</span>    → chroma math → hex/rgb list
   <span class="node">...</span>
 
@@ -235,9 +218,21 @@ footer .links a:hover{color:var(--fg)}
   </div>
 </section>
 
+<section id="stats">
+  <div class="section-label">stats</div>
+  <h2>by the numbers</h2>
+  <p>zero npm installs. zero api keys. zero framework lock-in.</p>
+  <div class="stats-grid">
+    <div class="stat"><div class="num">22</div><div class="label">services</div></div>
+    <div class="stat"><div class="num">0</div><div class="label">dependencies</div></div>
+    <div class="stat"><div class="num">1</div><div class="label">language</div></div>
+    <div class="stat"><div class="num">1</div><div class="label">license</div></div>
+  </div>
+</section>
+
 <footer>
   <div class="inner">
-    <p>MIT licensed &middot; by poke labs &middot; 2026</p>
+    <p>mit licensed &middot; by poke labs &middot; 2026</p>
     <div class="links">
       <a href="https://github.com/pokelabshq/council" target="_blank" rel="noopener">github</a>
       <a href="https://pokelabs.org" target="_blank" rel="noopener">pokelabs.org</a>
